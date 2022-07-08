@@ -31,7 +31,7 @@ class DataIngestion:
 
             # folder location to download url
 
-            tgz_download_dir = self.data_ingestion_config.tgz_dwnload_dir
+            tgz_download_dir = self.data_ingestion_config.tgz_download_dir
 
             if os.path.exists(tgz_download_dir):
                 os.remove(tgz_download_dir)

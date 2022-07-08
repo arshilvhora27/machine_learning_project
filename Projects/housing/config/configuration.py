@@ -1,6 +1,6 @@
 
 from housing.component import data_ingestion
-from housing.constant import CONFIG_FILE_PATH, CURRENT_TIME_STAMP, DATA_INGESTION_ARTIFACT_DIR, DATA_INGESTION_CONFIG_KEY, DATA_INGESTION_DIR_NAME_KEY, DATA_INGESTION_DOWNLOAD_URL_KEY, DATA_INGESTION_INGESTED_DIR_NAME_KEY, DATA_INGESTION_RAW_DATA_DIR_KEY, DATA_INGESTION_TEST_DIR_KEY, DATA_INGESTION_TGZ_DOWNLOAD_DIR_KEY, DATA_INGESTION_TRAIN_DIR_KEY, ROOT_DIR, TRAINING_PIPELINE_ARTIFACT_DIR_KEY, TRAINING_PIPELINE_CONFIG_KEY, TRAINING_PIPELINE_NAME_KEY
+from housing.constant import CONFIG_FILE_PATH, CURRENT_TIME_STAMP, DATA_INGESTION_ARTIFACT_DIR, DATA_INGESTION_CONFIG_KEY, DATA_INGESTION_DIR_NAME_KEY, DATA_INGESTION_DOWNLOAD_URL_KEY, DATA_INGESTION_INGESTED_DIR_NAME_KEY, DATA_INGESTION_RAW_DATA_DIR_KEY, DATA_INGESTION_TEST_DIR_KEY, DATA_INGESTION_TGZ_DOWNLOAD_DIR_KEY, DATA_INGESTION_TRAIN_DIR_KEY, DATA_VALIDATION_ARTIFACT_DIR_NAME, DATA_VALIDATION_CONFIG_KEY, DATA_VALIDATION_REPORT_PAGE_FILE_NAME_KEY, DATA_VALIDATION_SCHEMA_DIR_KEY, DATA_VALIDATION_SCHEMA_FILE_NAME_KEY, ROOT_DIR, TRAINING_PIPELINE_ARTIFACT_DIR_KEY, TRAINING_PIPELINE_CONFIG_KEY, TRAINING_PIPELINE_NAME_KEY
 from housing.entity.config_entity import DataIngestionConfig, DataTransformationConfig, DataValidationConfig, ModelTrainerConfig, \
 ModelEvaluationConfig,ModelPushConfig, TrainingPipelineConfig  
 from housing.util.util import read_yanl_file
@@ -70,7 +70,41 @@ class Configuration:
             
 
     def get_data_validation__config(self) ->DataValidationConfig:
-        pass
+        try:
+             artifact_dir = self.training_pipeline_config.artifact_dir # root directory
+             ## creating a folder for data validation 
+             ##now just like we created a folder for data ingestion we will create a folder for data validation and for that we will create a directory
+
+             data_validation_artifact_dir = os.path.join(
+             artifact_dir,
+             DATA_VALIDATION_ARTIFACT_DIR_NAME,
+             self.time_stamp
+            )
+             data_validation_config = self.config_info[DATA_VALIDATION_CONFIG_KEY]
+            
+            
+
+             schema_file_path = os.path.join(ROOT_DIR,
+             data_validation_config[DATA_VALIDATION_SCHEMA_DIR_KEY],
+             data_validation_config[DATA_VALIDATION_SCHEMA_FILE_NAME_KEY]
+             )
+
+             report_file_path = os.path.join(data_validation_artifact_dir,
+             data_validation_config[DATA_VALIDATION_REPORT_PAGE_FILE_NAME_KEY]
+             )
+
+             report_page_file_path = os.path.join(data_validation_artifact_dir,
+             data_validation_config[DATA_VALIDATION_REPORT_PAGE_FILE_NAME_KEY]
+             )
+             data_validation_config = DataValidationConfig(
+                schema_file_path=schema_file_path,
+                report_file_path = report_file_path,
+                report_page_file_path = report_page_file_path
+             )
+
+             return data_validation_config
+        except Exception as e:
+            raise HousingException(e,sys) from e
 
     def get_data_transformation__config(self) ->DataTransformationConfig:
         pass
